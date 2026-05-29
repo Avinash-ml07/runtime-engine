@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  apps      App[]
+  createdAt DateTime @default(now())
+}
+
+model App {
+  id          String       @id @default(uuid())
+  name        String
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  config      Json         // Stores the raw, sanitized, validated application config blueprint
+  collections Collection[]
+  createdAt   DateTime     @default(now())
+}
+
+model Collection {
+  id        String     @id @default(uuid())
+  name      String
+  appId     String
+  app       App        @relation(fields: [appId], references: [id], onDelete: Cascade)
+  records   Record[]
+  createdAt DateTime   @default(now())
+
+  @@unique([appId, name])
+}
+
+model Record {
+  id           String     @id @default(uuid())
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  data         Json       // Stores actual row data (e.g., { "title": "Fix Bug", "status": "Open" })
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
