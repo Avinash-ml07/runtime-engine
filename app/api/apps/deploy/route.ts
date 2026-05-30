@@ -67,7 +67,7 @@ const handler: RouteHandler = async (req) => {
       app: {
         id: appWithCollections!.id,
         name: appWithCollections!.name,
-        config: appWithCollections!.config as AppConfig,
+        config: appWithCollections!.config as any,
         collections: appWithCollections!.collections,
         createdAt: appWithCollections!.createdAt,
       },
