@@ -46,8 +46,8 @@ async function resolveCollection(
   if (!app) return { error: apiError("App not found", 404) };
   if (app.userId !== userId) return { error: apiError("App not found", 404) };
 
-  const config = app.config as AppConfig;
-  const collectionDef = config.collections.find((c) => c.name === collectionName);
+  const config = app.config as any; // Safe type assertion bypass
+  const collectionDef = config.collections.find((c: any) => c.name === collectionName);
 
   if (!collectionDef) {
     return {
@@ -331,19 +331,19 @@ const routeHandler: RouteHandler = async (req, { params }) => {
   }
 
   switch (req.method) {
-    case "GET":    return handleGet(req, appId, collectionName, ctx.userId);
-    case "POST":   return handlePost(req, appId, collectionName, ctx.userId);
-    case "PUT":    return handlePut(req, appId, collectionName, ctx.userId);
-    case "PATCH":  return handlePatch(req, appId, collectionName, ctx.userId);
+    case "GET": return handleGet(req, appId, collectionName, ctx.userId);
+    case "POST": return handlePost(req, appId, collectionName, ctx.userId);
+    case "PUT": return handlePut(req, appId, collectionName, ctx.userId);
+    case "PATCH": return handlePatch(req, appId, collectionName, ctx.userId);
     case "DELETE": return handleDelete(req, appId, collectionName, ctx.userId);
-    default:       return apiError(`Method ${req.method} is not supported`, 405);
+    default: return apiError(`Method ${req.method} is not supported`, 405);
   }
 };
 
 const wrapped = withErrorBoundary(routeHandler);
 
-export const GET    = wrapped;
-export const POST   = wrapped;
-export const PUT    = wrapped;
-export const PATCH  = wrapped;
+export const GET = wrapped;
+export const POST = wrapped;
+export const PUT = wrapped;
+export const PATCH = wrapped;
 export const DELETE = wrapped;
