@@ -41,7 +41,7 @@ const handler: RouteHandler = async (req) => {
       data: {
         name: config.name,
         userId: ctx.userId,
-        config: config as unknown as Record<string, unknown>,
+        config: config as any,
       },
     });
 
